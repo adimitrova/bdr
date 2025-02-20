@@ -13,4 +13,5 @@ build:
 	docker-compose build
 run_with_docker:
 	docker-compose up
-# 	docker run -d -v /Users/ani_dimitrova/DEVELOPMENT/personal/coding_projects/Python/big_data_republic:/app -w /app bdr-app
+test:
+	venv/bin/python -m pytest test/

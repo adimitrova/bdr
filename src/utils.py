@@ -30,6 +30,7 @@ def get_date_yesterday():
 
 
 def get_logger(logger_name):
+    print("Logs will be saved to: ", LOG_FILE_PATH)
     os.makedirs(os.path.join(Path(__file__).parent.absolute(), 'logs'), exist_ok=True)
     logger = logging.getLogger(logger_name)
     if logger.hasHandlers():  # Prevent duplicate handlers

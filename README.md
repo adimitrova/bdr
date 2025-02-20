@@ -2,17 +2,68 @@
 
 [![linting: pylint](https://img.shields.io/badge/linting-pylint-yellowgreen)](https://github.com/pylint-dev/pylint)
 
-# Class diagrams
+This app creates a Market which will keep track of the current prices for top x (configurable) types that are traded in this market. If the price is lower than a certain configurable percentage, it will send an email to all the traders/gamers subscribed to it. 
+It simulates livestream but actually fetches every few seconds. It calculates the average price from the last 7 days for the given type and calculates the discount price from that and compares the discount price to the latest price. The latest price is the price of SELL orders for that given type on that given market where the price is lowest for the last day and there are volumes left (stock basically left to buy). More info on Even online in the links below.
+
+- [Error handling](https://developers.eveonline.com/blog/error-rate-limiting-imminent)
+- [Applications EVE Online](https://developers.eveonline.com/applications)
+- [API UI](https://esi.evetech.net/ui/) 
+- [Swagger hub](https://apidog.com/apidoc/project-346592/api-3531125) 
+
+## Class diagrams
 
 ![class_diagram](img/classes.png)
 
 ---
 
-### Links:
-- [Error handling](https://developers.eveonline.com/blog/error-rate-limiting-imminent)
-- [Applications EVE Online](https://developers.eveonline.com/applications)
-- [API UI](https://esi.evetech.net/ui/) 
-- [Swagger hub](https://apidog.com/apidoc/project-346592/api-3531125) 
+## How to run
+
+### Locally
+
+- Make sure you have Java 17 or less installed (for spark)
+- Add config for the SMTP service with your email address and password, not a great practice, but this config file is not tracked so will be stored on your machine only. 
+`src/vault/config.yaml`
+ with the following syntax
+
+```yaml
+password: "llamapassword"   # if using gmail you need to generate an App password first and use that for which you need to enable 2FA. 
+port: '465'   # smtp secure port
+sender_email: llama@gmail.com
+smtp_server: smtp.gmail.com
+```
+
+- Check out the variables inside `settings/common.py` to see if there's anything you'd like to update. 
+- inside `docker-compose.yaml` you can change the number of replicas to run
+
+And then run.. 
+
+```bash
+make install
+make run
+```
+
+### With docker
+
+- Add config for the SMTP service with your email address and password, not a great practice, but this config file is not tracked so will be stored on your machine only. 
+`src/vault/config.yaml`
+ with the following syntax
+
+```yaml
+password: "llamapassword"   # if using gmail you need to generate an App password first and use that for which you need to enable 2FA. 
+port: '465'
+sender_email: llama@gmail.com
+smtp_server: smtp.gmail.com
+```
+
+- Check out the variables inside `settings/common.py` to see if there's anything you'd like to update. 
+- inside `docker-compose.yaml` you can change the number of replicas to run
+
+And then run.. 
+
+```bash
+make build
+make run_with_docker
+```
 
 ---
 
