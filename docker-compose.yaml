@@ -1,0 +1,17 @@
+version: "3.8"
+
+services:
+  my-app:
+    build:
+      context: .
+    volumes:
+      - /Users/ani_dimitrova/DEVELOPMENT/personal/coding_projects/Python/big_data_republic:/app   # shouldn't be hardcoded
+    working_dir: /app
+    image: bdr-app:latest
+    ports:
+      - "8082:8080"
+    command: make run
+    deploy:
+      replicas: 5
+      restart_policy:
+        condition: on-failure
