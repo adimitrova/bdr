@@ -109,7 +109,7 @@ class Type:
             return True
         else:
             status = "is NOT good"
-            logger.info(log_message,ss
+            logger.info(log_message,
                         self.buy_discount_percent, self.name, self.market_id, status,
                         curr_price, self.seven_day_ave, discount_price)
             return False
