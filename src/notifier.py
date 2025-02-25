@@ -30,11 +30,11 @@ logger = get_logger('config')
 
 class Notifier:
     def __init__(self, config_path: str = CONFIG_FILE_PATH):
-        self.config_path = config_path
-        self.sender = self.parse_config()
+        self.config_path: str = config_path
+        self.sender: Sender = self.parse_config()
         logger.info("Created notifier: %s", self.__repr__())
 
-    def parse_config(self):
+    def parse_config(self) -> Sender:
         with open(self.config_path, 'r') as f:
             config_data = yaml.safe_load(f.read())
             return Sender(
@@ -44,7 +44,7 @@ class Notifier:
                 password=config_data.get("password")
             )
 
-    def notify(self, market_id: str, type_obj: Type, recipient: "Gamer"):
+    def notify(self, market_id: str, type_obj: Type, recipient: "Gamer") -> None:
         logger.info(f"Notifying user with email {recipient.email_address} about low price of item..")
 
         text_subtype = 'plain'

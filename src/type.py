@@ -12,19 +12,19 @@ from src.utils import (
 
 from src.settings import config
 
-logger = get_logger("Market")
+logger = get_logger("Type")
 
 
 class Type:
     def __init__(self, spark_context: SparkSession, type_id: str, market_id: int):
-        self.sc = spark_context
-        self.id = type_id
-        self._name = None
-        self._description = None
-        self._market_id = market_id
-        self.buy_discount_percent = config.DISCOUNT_PRICE_PERCENT if config.DISCOUNT_PRICE_PERCENT else 30
-        self.seven_day_ave = None
-        self.seven_days_volume = None
+        self.sc: SparkSession = spark_context
+        self.id: int = type_id
+        self._name: str = None
+        self._description: str = None
+        self._market_id: int = market_id
+        self.buy_discount_percent: int = config.DISCOUNT_PRICE_PERCENT if config.DISCOUNT_PRICE_PERCENT else 30
+        self.seven_day_ave: float = None
+        self.seven_days_volume: int = None
 
     @property
     def market_id(self):
@@ -42,7 +42,7 @@ class Type:
             self._get_type_name_description()
         return self._description
 
-    def calculate_7day_ave(self):
+    def calculate_7day_ave(self) -> None:
         # NB: needs to fetch latest data as the average may change based on new orders
         # (not sure i will have time to implement ^^)
         # so for now - calculate once at the instantiation time of the object and use as hardcoded value
@@ -86,7 +86,7 @@ class Type:
                     self.seven_day_ave, self.seven_days_volume)
         self.sc.catalog.dropTempView("historical_prices_df")
 
-    def calc_percent_from_ave(self):
+    def calc_percent_from_ave(self) -> float:
         target_price = self.seven_day_ave - self.seven_day_ave * self.buy_discount_percent / 100
         logger.info("Calculated discounted price based on average for the last 7 days with discount of %s%%: %s",
                     self.buy_discount_percent, target_price)
@@ -109,14 +109,14 @@ class Type:
             return True
         else:
             status = "is NOT good"
-            logger.info(log_message,
+            logger.info(log_message,ss
                         self.buy_discount_percent, self.name, self.market_id, status,
                         curr_price, self.seven_day_ave, discount_price)
             return False
         # FIXME: Logs a line like
         #  8   19:13:33 - type.py:is_price_good_to_buy:109      - idk why, but it's not in the log file
 
-    def _get_type_name_description(self):
+    def _get_type_name_description(self) -> None:
         type_data = fetch_data_from_api(url=config.ENDPOINT_GET_ITEM_INFO.format(type_id=self.id))
         self._name = type_data.get("name", None)
         self._description = type_data.get("description", None)

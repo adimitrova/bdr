@@ -1,7 +1,7 @@
 import os
 import random
 import time
-from typing import List
+from typing import List, Union
 from math import inf
 from pyspark.errors.exceptions.captured import AnalysisException
 from pyspark.sql import SparkSession
@@ -30,7 +30,7 @@ class Market:
         self.sc: SparkSession = spark_context
         self.type_ids_list: List[int] = self.get_top_x_most_popular_types()
 
-    def get_top_x_most_popular_types(self):
+    def get_top_x_most_popular_types(self) -> List[int]:
         # top types are the ones with the most volume, i.e. the ones that are most commonly traded in the current market
         logger.info("Fetching data from API - top %s types for market_id=%s", self.num_of_types_to_fetch, self.id)
         data_file_name = get_data_path(file_name=f"CURR_PRICE_PER_REGION_SELL_{self.id}.json")
@@ -69,24 +69,26 @@ class Market:
                     self.num_of_types_to_fetch, self.id, popular_types_list)
         return popular_types_list
 
-    def add_trader(self, trader: Gamer):
+    def add_trader(self, trader: Gamer) -> None:
         logger.info("Adding gamer %s to the traders list for market %s", trader.name, self.id)
         self.traders.append(trader)
 
-    def remove_trader(self, trader: Gamer):
+    def remove_trader(self, trader: Gamer) -> bool:
         logger.info("Removing gamer %s from the traders list for market %s", trader.name, self.id)
         if trader in self.traders:
             self.traders.remove(trader)
+            return True
         else:
             logger.info(f"Gamer {trader.name} not found in traders list.")
+            return False
 
-    def notify_traders(self, type_obj: Type):
+    def notify_traders(self, type_obj: Type) -> None:
         for trader in self.traders:
             logger.info("Notifying trader %s about low price for type_id %s", trader.name, type_obj.id)
             trader.notify(market_id=self.id, type_obj=type_obj)
 
-    def track_item_prices(self):
-
+    def track_item_prices(self) -> None:
+        # NB: Core method in the core class
         while True:
             logger.info("=" * 100)
             # random choice simulates random type data coming in for one of the IDs already inside the list
@@ -97,7 +99,7 @@ class Market:
                 self.notify_traders(type_obj=type_obj)
             time.sleep(3)  # FIXME: maybe with a proper queue and/or rabbitMQ if there's time, for now.. sleep
 
-    def get_curr_price_for_type(self, type_id_to_query: int):
+    def get_curr_price_for_type(self, type_id_to_query: int) -> Union[int, float]:
         logger.info("Receiving new data for type_id %s and market_id %s.. please wait..",
                     type_id_to_query, self.id)  # fake log to simulate polling
         url = config.ENDPOINT_CURR_PRICE_PER_REGION_AND_ITEM_SELL.format(region_id=self.id,
