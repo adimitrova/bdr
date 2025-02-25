@@ -10,7 +10,13 @@ It simulates livestream but actually fetches every few seconds. It calculates th
 - [API UI](https://esi.evetech.net/ui/) 
 - [Swagger hub](https://apidog.com/apidoc/project-346592/api-3531125) 
 
-## Class diagrams
+## Diagrams
+
+### High-level diagram
+
+<img src="img/diagram.png" alt="drawing" width="700"/>
+
+### Class diagram
 
 ![class_diagram](img/classes.png)
 
